@@ -70,6 +70,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Detect if running on GitHub Pages or locally
         const isGitHub = window.location.hostname.includes('github.io');
         
+        if (isGitHub) {
+            const badge = document.getElementById('demo-badge');
+            if (badge) badge.classList.add('active');
+        }
+        
         try {
             let data;
             if (isGitHub) {
@@ -99,24 +104,87 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Helper for Demo Simulation
     function getSimulatedResult(drugList) {
-        // Simple logic for demo: If Aspirin + Warfarin, show high risk. Else show safe.
         const normalized = drugList.map(d => d.toLowerCase());
-        const isAspirin = normalized.some(d => d.includes('aspirin') || d.includes('阿斯匹靈'));
-        const isWarfarin = normalized.some(d => d.includes('warfarin') || d.includes('華法林'));
-
-        if (isAspirin && isWarfarin) {
-            return {
-                overall_level: 'red',
-                disclaimer: '免責聲明：此為展示模式，模擬分析結果僅供參考。',
-                pair_results: [{
+        
+        // Define mock cases
+        const cases = [
+            {
+                drugs: ['aspirin', 'warfarin', '阿斯匹靈', '華法林'],
+                result: {
+                    overall_level: 'red',
                     drug_a_zh: '阿斯匹靈', drug_a_input: 'Aspirin',
                     drug_b_zh: '華法林', drug_b_input: 'Warfarin',
                     level: 'red',
-                    reasons: [{
-                        description: '嚴重出血風險顯著增加，包括腸胃道出血和顱內出血。',
-                        mechanism: '兩者皆具抗凝血/抗血小板作用，併用會產生加成效應，極大增加出血機率。'
-                    }]
-                }]
+                    description: '嚴重出血風險顯著增加，包括腸胃道出血和慶內出血。',
+                    mechanism: '兩者皆具抗凝血/抗血小板作用，併用會產生加成效應。'
+                }
+            },
+            {
+                drugs: ['sildenafil', 'nitroglycerin', '威而鋼', '硝化甘油'],
+                result: {
+                    overall_level: 'red',
+                    drug_a_zh: '威而鋼', drug_a_input: 'Sildenafil',
+                    drug_b_zh: '硝化甘油', drug_b_input: 'Nitroglycerin',
+                    level: 'red',
+                    description: '可能導致嚴重的低血壓，甚至致命。',
+                    mechanism: '兩者皆會增加單氧化氮 (NO)，導致血管劇烈擴張。'
+                }
+            },
+            {
+                drugs: ['ibuprofen', 'lithium', '伊普', '鋰鹽'],
+                result: {
+                    overall_level: 'red',
+                    drug_a_zh: '伊普', drug_a_input: 'Ibuprofen',
+                    drug_b_zh: '鋰鹽', drug_b_input: 'Lithium',
+                    level: 'red',
+                    description: '可能導致鋰鹽中毒，影響腎功能。',
+                    mechanism: 'NSAIDs 會減少前列腺素合成，進而減少腎臟對鋰的排泄。'
+                }
+            },
+            {
+                drugs: ['statin', 'grapefruit', '史他汀', '葡萄柚'],
+                result: {
+                    overall_level: 'yellow',
+                    drug_a_zh: '史他汀類藥物', drug_a_input: 'Statin',
+                    drug_b_zh: '葡萄柚汁', drug_b_input: 'Grapefruit Juice',
+                    level: 'yellow',
+                    description: '增加藥物血中濃度，可能增加肌肉痠痛風險。',
+                    mechanism: '葡萄柚成分會抑制 CYP3A4 酵素，延緩某些史他汀類藥物的代謝。'
+                }
+            }
+        ];
+
+        let foundPairs = [];
+        let maxLevel = 'green';
+
+        // Check for matches
+        for (let i = 0; i < normalized.length; i++) {
+            for (let j = i + 1; j < normalized.length; j++) {
+                const drugA = normalized[i];
+                const drugB = normalized[j];
+
+                const match = cases.find(c => 
+                    (c.drugs.some(d => drugA.includes(d)) && c.drugs.some(d => drugB.includes(d)))
+                );
+
+                if (match) {
+                    foundPairs.push(match.result);
+                    if (match.result.level === 'red') maxLevel = 'red';
+                    else if (match.result.level === 'yellow' && maxLevel !== 'red') maxLevel = 'yellow';
+                }
+            }
+        }
+
+        if (foundPairs.length > 0) {
+            return {
+                overall_level: maxLevel,
+                disclaimer: '免責聲明：此為展示模式，模擬分析結果僅供參考。若需精確分析，請於本地環境執行。',
+                pair_results: foundPairs.map(p => ({
+                    drug_a_zh: p.drug_a_zh, drug_a_input: p.drug_a_input,
+                    drug_b_zh: p.drug_b_zh, drug_b_input: p.drug_b_input,
+                    level: p.level,
+                    reasons: [{ description: p.description, mechanism: p.mechanism }]
+                }))
             };
         }
         
