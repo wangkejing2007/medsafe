@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>藥安心 - AI 多重用藥安全守護系統</title>
+    <link rel="stylesheet" href="style.css?v=2.7">
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <i data-lucide="shield-check"></i>
+                <span>藥安心 <small>MedSafe</small></span>
+            </div>
+            <nav>
+                <button id="btn-elderly" class="active"><i data-lucide="heart"></i>長輩</button>
+                <button id="btn-family"><i data-lucide="users"></i>家人</button>
+                <button id="btn-doctor"><i data-lucide="stethoscope"></i>醫師</button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="hero-bg">
+        <img src="hero.png" alt="Medical Technology">
+    </div>
+
+    <main>
+        <section class="glass-card input-section">
+            <div class="section-header">
+                <i data-lucide="activity" class="accent-icon"></i>
+                <h1>多重用藥安全檢查</h1>
+            </div>
+            <p class="instruction-main">請輸入您目前服用的所有藥物</p>
+            <p class="instruction-sub">(支援中文、英文或品牌名搜尋)</p>
+            
+            <div class="search-bar">
+                <i data-lucide="search" class="search-icon"></i>
+                <input type="text" id="drug-input" placeholder="例如：普拿疼、Aspirin...">
+                <button id="add-drug">新增</button>
+            </div>
+            
+            <div id="drug-list" class="tag-container"></div>
+            
+            <button id="analyze-btn" class="primary-btn pulse-effect" disabled>
+                <i data-lucide="search"></i>
+                開始 AI 智慧分析
+            </button>
+        </section>
+
+        <section id="results-section" class="results-hidden">
+            <div class="result-actions">
+                <button id="restart-btn" class="secondary-btn">
+                    <i data-lucide="rotate-ccw"></i>
+                    重新開始分析
+                </button>
+            </div>
+            <div id="overall-status" class="glass-card status-card">
+                <div id="summary-icon-container">
+                    <!-- JS will inject traffic light here -->
+                </div>
+                <div class="status-desc">
+                    <h2 id="status-text"></h2>
+                    <p id="status-subtext"></p>
+                </div>
+            </div>
+
+            <div id="detail-results" class="detail-container">
+                <!-- 由 JS 動態注入內容 -->
+            </div>
+
+            <div class="disclaimer-footer">
+                <i data-lucide="info"></i>
+                <p id="disclaimer-text"></p>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js?v=2.7"></script>
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
