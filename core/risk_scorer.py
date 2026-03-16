@@ -2,6 +2,7 @@ from typing import List, Dict, Any
 from medsafe.core.drug_database import DrugDatabase
 from medsafe.core.molecular_analyzer import MolecularAnalyzer
 from medsafe.core.cyp450_analyzer import CYP450Analyzer
+from medsafe.core.ai_model import AIInteractionModel
 from medsafe.config import settings
 
 class RiskScorer:
@@ -11,6 +12,7 @@ class RiskScorer:
         self.db = DrugDatabase()
         self.mol_analyzer = MolecularAnalyzer()
         self.cyp_analyzer = CYP450Analyzer()
+        self.ai_engine = AIInteractionModel()
 
     def calculate_interaction_risk(self, drug_a: str, drug_b: str) -> Dict[str, Any]:
         """計算兩藥物之間的綜合風險"""
@@ -57,6 +59,19 @@ class RiskScorer:
                     "description": f"分子結構高度相似 (相似度: {similarity:.2f})，可能有藥效疊加風險",
                     "mechanism": f"Structural similarity: {similarity:.2f}"
                 })
+
+        # 4. AI 模型預測 (預測潛在風險)
+        if smiles_a and smiles_b:
+            ai_score, ai_details = self.ai_engine.predict_risk(smiles_a, smiles_b)
+            # 將 AI 分數按比例權重整合 (20% 權重)
+            score = max(score, int(ai_score))
+            reasons.append({
+                "source": "ai_prediction",
+                "severity": "info",
+                "description": "AI 預測潛在風險",
+                "mechanism": "SHAP 可解釋性分析",
+                "ai_details": ai_details
+            })
 
         # 判定分級
         if score > settings.RISK_YELLOW_MAX:

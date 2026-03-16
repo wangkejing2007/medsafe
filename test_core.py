@@ -27,6 +27,10 @@ def test_analysis():
             print(f"- 來源: {reason['source']}")
             print(f"- 描述: {reason['description']}")
             print(f"- 機制: {reason['mechanism']}")
+            if "ai_details" in reason:
+                details = reason["ai_details"]
+                print(f"  [AI 詳情] 分數: {details['score']}, 基準值: {details['base_value']}")
+                print(f"  [SHAP 分析] 貢獻特徵: {', '.join([f'{d['feature']}({d['contribution']})' for d in details['shap_summary']])}")
 
 if __name__ == "__main__":
     test_analysis()

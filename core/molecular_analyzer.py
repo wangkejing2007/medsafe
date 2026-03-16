@@ -32,7 +32,9 @@ class MolecularAnalyzer:
             "h_donors": Descriptors.NumHDonors(mol),
             "h_acceptors": Descriptors.NumHAcceptors(mol),
             "tpsa": round(Descriptors.TPSA(mol), 2),
-            "rotatable_传递": Descriptors.NumRotatableBonds(mol)
+            "rotatable_bonds": Descriptors.NumRotatableBonds(mol),
+            "heavy_atoms": mol.GetNumHeavyAtoms(),
+            "rings": Descriptors.RingCount(mol)
         }
         
         # Lipinski Rule of 5 check
