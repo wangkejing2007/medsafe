@@ -1,0 +1,90 @@
+[
+  {
+    "drug_a": "Abrocitinib",
+    "drug_b": "Doxepin",
+    "severity": "major",
+    "mechanism": "Abrocitinib 為 CYP2C19 中度抑制劑，Doxepin 經由 CYP2C19 代謝。Abrocitinib 會減慢 Doxepin 的代謝速度，導致其血漿濃度升高。",
+    "mechanism_en": "Abrocitinib inhibits CYP2C19, slowing Doxepin metabolism and increasing plasma concentration.",
+    "effect": "Doxepin 血漿濃度升高，可能增加嗜睡、口乾、便秘等抗膽鹼副作用，嚴重時可能導致心律不整。",
+    "recommendation": "建議監測 Doxepin 的副作用，必要時調整劑量。應告知醫師正在同時使用這兩種藥物。",
+    "cyp_enzymes": ["CYP2C19"],
+    "evidence_level": "moderate"
+  },
+  {
+    "drug_a": "Doxepin",
+    "drug_b": "Fexofenadine",
+    "severity": "moderate",
+    "mechanism": "Doxepin 和 Fexofenadine 皆具有抗組織胺作用。兩藥合用會產生鎮靜效果的疊加。",
+    "mechanism_en": "Both drugs have antihistamine effects. Concurrent use causes additive sedation.",
+    "effect": "過度嗜睡、反應遲鈍、認知能力下降，增加跌倒風險（對長輩特別危險）。",
+    "recommendation": "若需合用，建議從低劑量開始，避免駕駛或操作機械。注意長輩跌倒風險。",
+    "cyp_enzymes": [],
+    "evidence_level": "high"
+  },
+  {
+    "drug_a": "Warfarin",
+    "drug_b": "Aspirin",
+    "severity": "major",
+    "mechanism": "Warfarin 為抗凝血劑，Aspirin 為抗血小板藥物。兩藥皆影響凝血機制，合用會大幅增加出血風險。",
+    "mechanism_en": "Both affect hemostasis through different mechanisms, greatly increasing bleeding risk.",
+    "effect": "嚴重出血風險顯著增加，包括腸胃道出血和顱內出血。",
+    "recommendation": "除非醫師特別評估過利弊，否則應避免合用。若必須合用，需密切監測 INR 值。",
+    "cyp_enzymes": [],
+    "evidence_level": "high"
+  },
+  {
+    "drug_a": "Simvastatin",
+    "drug_b": "Clarithromycin",
+    "severity": "major",
+    "mechanism": "Clarithromycin 為 CYP3A4 強效抑制劑，Simvastatin 經由 CYP3A4 代謝。合用會大幅升高 Simvastatin 的血漿濃度。",
+    "mechanism_en": "Clarithromycin strongly inhibits CYP3A4, greatly increasing Simvastatin plasma levels.",
+    "effect": "可能導致橫紋肌溶解症（rhabdomyolysis），症狀包括肌肉疼痛、深色尿液，嚴重時可致命。",
+    "recommendation": "禁止合用。使用 Clarithromycin 期間應停用 Simvastatin，或改用不經 CYP3A4 代謝的他汀類藥物。",
+    "cyp_enzymes": ["CYP3A4"],
+    "evidence_level": "high"
+  },
+  {
+    "drug_a": "Clopidogrel",
+    "drug_b": "Omeprazole",
+    "severity": "moderate",
+    "mechanism": "Clopidogrel 需經 CYP2C19 活化為有效代謝物。Omeprazole 為 CYP2C19 抑制劑，會減少 Clopidogrel 的活化。",
+    "mechanism_en": "Omeprazole inhibits CYP2C19, reducing Clopidogrel activation to active metabolite.",
+    "effect": "Clopidogrel 的抗血小板效果可能減弱，增加心血管事件風險。",
+    "recommendation": "建議改用 Pantoprazole（不影響 CYP2C19）或 Rabeprazole。若需使用 Omeprazole，應將兩藥服藥時間間隔 12 小時以上。",
+    "cyp_enzymes": ["CYP2C19"],
+    "evidence_level": "high"
+  },
+  {
+    "drug_a": "Metformin",
+    "drug_b": "Furosemide",
+    "severity": "moderate",
+    "mechanism": "Furosemide 可能改變腎臟血流和電解質平衡，影響 Metformin 的腎臟清除率。",
+    "mechanism_en": "Furosemide may alter renal blood flow and electrolyte balance, affecting Metformin clearance.",
+    "effect": "增加乳酸性酸中毒的風險，特別是在腎功能不全的患者中。",
+    "recommendation": "需監測腎功能和血糖水平。腎功能不全者應特別注意。",
+    "cyp_enzymes": [],
+    "evidence_level": "moderate"
+  },
+  {
+    "drug_a": "Fluoxetine",
+    "drug_b": "Tramadol",
+    "severity": "major",
+    "mechanism": "Fluoxetine 抑制 CYP2D6，減少 Tramadol 代謝為活性代謝物。此外，兩藥皆增加血清素濃度。",
+    "mechanism_en": "Fluoxetine inhibits CYP2D6 affecting Tramadol metabolism, and both increase serotonin levels.",
+    "effect": "血清素症候群風險（症狀：發熱、肌肉僵硬、意識混亂、心跳加速），同時 Tramadol 止痛效果可能減弱。",
+    "recommendation": "應避免合用。若必須使用，需嚴密監測血清素症候群的症狀。",
+    "cyp_enzymes": ["CYP2D6"],
+    "evidence_level": "high"
+  },
+  {
+    "drug_a": "Amlodipine",
+    "drug_b": "Simvastatin",
+    "severity": "moderate",
+    "mechanism": "Amlodipine 為 CYP3A4 弱效抑制劑，可能輕微升高 Simvastatin 的血漿濃度。",
+    "mechanism_en": "Amlodipine weakly inhibits CYP3A4, mildly increasing Simvastatin levels.",
+    "effect": "增加肌肉病變的風險，尤其在高劑量 Simvastatin 時。",
+    "recommendation": "合用時 Simvastatin 劑量不應超過 20mg/天。或考慮改用 Rosuvastatin。",
+    "cyp_enzymes": ["CYP3A4"],
+    "evidence_level": "high"
+  }
+]

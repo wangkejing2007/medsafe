@@ -1,0 +1,141 @@
+{
+  "CYP1A2": {
+    "name": "CYP1A2",
+    "description": "代謝咖啡因、茶鹼等黃嘌呤類藥物",
+    "substrates": [
+      {"name": "Theophylline", "name_zh": "茶鹼"},
+      {"name": "Caffeine", "name_zh": "咖啡因"},
+      {"name": "Melatonin", "name_zh": "褪黑激素"},
+      {"name": "Clozapine", "name_zh": "氯氮平"},
+      {"name": "Olanzapine", "name_zh": "奧氮平"},
+      {"name": "Duloxetine", "name_zh": "度洛西汀"},
+      {"name": "Ramelteon", "name_zh": "拉美替昂"},
+      {"name": "Tizanidine", "name_zh": "替扎尼定"}
+    ],
+    "inhibitors": [
+      {"name": "Fluvoxamine", "name_zh": "氟伏沙明", "strength": "strong"},
+      {"name": "Ciprofloxacin", "name_zh": "環丙沙星", "strength": "strong"},
+      {"name": "Enoxacin", "name_zh": "依諾沙星", "strength": "strong"},
+      {"name": "Cimetidine", "name_zh": "西咪替丁", "strength": "moderate"}
+    ],
+    "inducers": [
+      {"name": "Smoking", "name_zh": "吸菸", "strength": "strong"},
+      {"name": "Omeprazole", "name_zh": "奥美拉唑", "strength": "moderate"},
+      {"name": "Carbamazepine", "name_zh": "卡馬西平", "strength": "moderate"}
+    ]
+  },
+  "CYP2C9": {
+    "name": "CYP2C9",
+    "description": "代謝華法林、非類固醇消炎藥等",
+    "substrates": [
+      {"name": "Warfarin", "name_zh": "華法林"},
+      {"name": "Phenytoin", "name_zh": "苯妥英"},
+      {"name": "Losartan", "name_zh": "氯沙坦"},
+      {"name": "Ibuprofen", "name_zh": "布洛芬"},
+      {"name": "Diclofenac", "name_zh": "雙氯芬酸"},
+      {"name": "Celecoxib", "name_zh": "塞來昔布"},
+      {"name": "Glipizide", "name_zh": "格列吡嗪"},
+      {"name": "Tolbutamide", "name_zh": "甲苯磺丁脲"}
+    ],
+    "inhibitors": [
+      {"name": "Fluconazole", "name_zh": "氟康唑", "strength": "strong"},
+      {"name": "Amiodarone", "name_zh": "胺碘酮", "strength": "moderate"},
+      {"name": "Fluoxetine", "name_zh": "氟西汀", "strength": "moderate"},
+      {"name": "Metronidazole", "name_zh": "甲硝唑", "strength": "moderate"}
+    ],
+    "inducers": [
+      {"name": "Rifampin", "name_zh": "利福平", "strength": "strong"},
+      {"name": "Carbamazepine", "name_zh": "卡馬西平", "strength": "moderate"},
+      {"name": "Phenobarbital", "name_zh": "苯巴比妥", "strength": "moderate"}
+    ]
+  },
+  "CYP2C19": {
+    "name": "CYP2C19",
+    "description": "代謝氫離子幫浦抑制劑、苯二氮平類等",
+    "substrates": [
+      {"name": "Omeprazole", "name_zh": "奧美拉唑"},
+      {"name": "Clopidogrel", "name_zh": "氯吡格雷"},
+      {"name": "Diazepam", "name_zh": "地西泮"},
+      {"name": "Doxepin", "name_zh": "多慮平"},
+      {"name": "Escitalopram", "name_zh": "艾司西酞普蘭"},
+      {"name": "Voriconazole", "name_zh": "伏立康唑"},
+      {"name": "Clobazam", "name_zh": "氯巴占"},
+      {"name": "Lansoprazole", "name_zh": "蘭索拉唑"}
+    ],
+    "inhibitors": [
+      {"name": "Fluoxetine", "name_zh": "氟西汀", "strength": "strong"},
+      {"name": "Fluvoxamine", "name_zh": "氟伏沙明", "strength": "strong"},
+      {"name": "Abrocitinib", "name_zh": "阿布西替尼", "strength": "moderate"},
+      {"name": "Omeprazole", "name_zh": "奧美拉唑", "strength": "moderate"},
+      {"name": "Esomeprazole", "name_zh": "埃索美拉唑", "strength": "moderate"}
+    ],
+    "inducers": [
+      {"name": "Rifampin", "name_zh": "利福平", "strength": "strong"},
+      {"name": "Carbamazepine", "name_zh": "卡馬西平", "strength": "moderate"}
+    ]
+  },
+  "CYP2D6": {
+    "name": "CYP2D6",
+    "description": "代謝多種抗憂鬱藥、抗精神病藥、β受體阻滯劑",
+    "substrates": [
+      {"name": "Codeine", "name_zh": "可待因"},
+      {"name": "Tramadol", "name_zh": "曲馬多"},
+      {"name": "Metoprolol", "name_zh": "美托洛爾"},
+      {"name": "Dextromethorphan", "name_zh": "右美沙芬"},
+      {"name": "Doxepin", "name_zh": "多慮平"},
+      {"name": "Amitriptyline", "name_zh": "阿米替林"},
+      {"name": "Nortriptyline", "name_zh": "去甲替林"},
+      {"name": "Fluoxetine", "name_zh": "氟西汀"},
+      {"name": "Paroxetine", "name_zh": "帕羅西汀"},
+      {"name": "Venlafaxine", "name_zh": "文拉法辛"},
+      {"name": "Risperidone", "name_zh": "利培酮"},
+      {"name": "Tamoxifen", "name_zh": "他莫昔芬"}
+    ],
+    "inhibitors": [
+      {"name": "Paroxetine", "name_zh": "帕羅西汀", "strength": "strong"},
+      {"name": "Fluoxetine", "name_zh": "氟西汀", "strength": "strong"},
+      {"name": "Quinidine", "name_zh": "奎尼丁", "strength": "strong"},
+      {"name": "Bupropion", "name_zh": "安非他酮", "strength": "strong"},
+      {"name": "Duloxetine", "name_zh": "度洛西汀", "strength": "moderate"},
+      {"name": "Sertraline", "name_zh": "舍曲林", "strength": "moderate"}
+    ],
+    "inducers": [
+      {"name": "Dexamethasone", "name_zh": "地塞米松", "strength": "weak"}
+    ]
+  },
+  "CYP3A4": {
+    "name": "CYP3A4",
+    "description": "人體最重要的代謝酶，代謝約 50% 的藥物",
+    "substrates": [
+      {"name": "Simvastatin", "name_zh": "辛伐他汀"},
+      {"name": "Atorvastatin", "name_zh": "阿托伐他汀"},
+      {"name": "Amlodipine", "name_zh": "氨氯地平"},
+      {"name": "Nifedipine", "name_zh": "硝苯地平"},
+      {"name": "Midazolam", "name_zh": "咪達唑侖"},
+      {"name": "Alprazolam", "name_zh": "阿普唑侖"},
+      {"name": "Cyclosporine", "name_zh": "環孢素"},
+      {"name": "Tacrolimus", "name_zh": "他克莫司"},
+      {"name": "Sildenafil", "name_zh": "西地那非"},
+      {"name": "Apixaban", "name_zh": "阿哌沙班"},
+      {"name": "Rivaroxaban", "name_zh": "利伐沙班"},
+      {"name": "Abrocitinib", "name_zh": "阿布西替尼"}
+    ],
+    "inhibitors": [
+      {"name": "Ketoconazole", "name_zh": "酮康唑", "strength": "strong"},
+      {"name": "Itraconazole", "name_zh": "伊曲康唑", "strength": "strong"},
+      {"name": "Clarithromycin", "name_zh": "克拉霉素", "strength": "strong"},
+      {"name": "Ritonavir", "name_zh": "利托那韋", "strength": "strong"},
+      {"name": "Erythromycin", "name_zh": "紅霉素", "strength": "moderate"},
+      {"name": "Diltiazem", "name_zh": "地爾硫卓", "strength": "moderate"},
+      {"name": "Verapamil", "name_zh": "維拉帕米", "strength": "moderate"},
+      {"name": "Grapefruit", "name_zh": "葡萄柚", "strength": "moderate"}
+    ],
+    "inducers": [
+      {"name": "Rifampin", "name_zh": "利福平", "strength": "strong"},
+      {"name": "Carbamazepine", "name_zh": "卡馬西平", "strength": "strong"},
+      {"name": "Phenytoin", "name_zh": "苯妥英", "strength": "strong"},
+      {"name": "Phenobarbital", "name_zh": "苯巴比妥", "strength": "strong"},
+      {"name": "St. John's Wort", "name_zh": "聖約翰草", "strength": "strong"}
+    ]
+  }
+}
