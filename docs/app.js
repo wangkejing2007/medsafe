@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     drug_a_zh: '阿斯匹靈', drug_a_input: 'Aspirin',
                     drug_b_zh: '華法林', drug_b_input: 'Warfarin',
                     level: 'red',
-                    description: '嚴重出血風險顯著增加，包括腸胃道出血和腦內出血。',,
+                    description: '嚴重出血風險顯著增加，包括腸胃道出血和腦內出血。',
                     mechanism: '兩者皆具抗凝血/抗血小板作用，併用會產生加成效應。',
                     ai_details: {
                         score: 92,
