@@ -6,7 +6,7 @@ python-multipart==0.0.9
 pydantic==2.9.0
 
 # Chemistry / Molecular Analysis
-rdkit-pypi==2024.3.5
+rdkit==2023.9.5
 
 # AI / Machine Learning
 numpy==1.26.4
