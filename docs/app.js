@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     drug_a_zh: '阿斯匹靈', drug_a_input: 'Aspirin',
                     drug_b_zh: '華法林', drug_b_input: 'Warfarin',
                     level: 'red',
-                    description: '嚴重出血風險顯著增加，包括腸胃道出血和慶內出血。',
+                    description: '嚴重出血風險顯著增加，包括腸胃道出血和腦內出血。',,
                     mechanism: '兩者皆具抗凝血/抗血小板作用，併用會產生加成效應。',
                     ai_details: {
                         score: 92,
@@ -366,6 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 修正分數顯示：後端傳回的是 0-100 的數值，不應再乘以 100 如果它已經是百分比量級
         // 在 main.py/core 中分數已經是 np.clip(raw_score, 0, 100)
         let displayScore = ai.score;
+        if (displayScore > 0 && displayScore <= 1) displayScore *= 100;
         if (displayScore > 100) displayScore = 100; // 安全機制
 
         const scoreExplanation = `
