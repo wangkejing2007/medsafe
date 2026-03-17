@@ -6,12 +6,12 @@ python-multipart==0.0.9
 pydantic==2.9.0
 
 # Chemistry / Molecular Analysis
-rdkit==2023.9.5
+rdkit
 
 # AI / Machine Learning
-numpy==1.26.4
-scikit-learn==1.5.1
-shap==0.46.0
+numpy
+scikit-learn
+shap
 
 # Data Processing
 pandas==2.2.2
