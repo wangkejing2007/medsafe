@@ -341,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
                 ${reasonsHtml}
-                ${res.ai_details ? renderAIInsight(res.ai_details) : ''}
+                ${(res.ai_details || (res.reasons.find(r => r.ai_details)?.ai_details)) ? renderAIInsight(res.ai_details || res.reasons.find(r => r.ai_details).ai_details, res.level) : ''}
             `;
             detailsContainer.appendChild(div);
         });
@@ -357,60 +357,107 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Render AI Insight Block with SHAP bars
+     * Enhanced with visibility rules and property explanations
      */
-    function renderAIInsight(ai) {
+    function renderAIInsight(ai, riskLevel) {
         if (!ai) return '';
         
-        // Handle both object-style (old/mock) and array-style (new backend) SHAP data
-        let shapItemsRaw = [];
-        if (Array.isArray(ai.shap_summary)) {
-            shapItemsRaw = ai.shap_summary.map(item => ({
-                feature: item.feature,
-                contribution: item.contribution
-            }));
-        } else if (ai.shap) {
-            shapItemsRaw = Object.entries(ai.shap).map(([key, val]) => ({
-                feature: key,
-                contribution: val
-            }));
+        // --- 1. AI 預測風險說明 ---
+        // 修正分數顯示：後端傳回的是 0-100 的數值，不應再乘以 100 如果它已經是百分比量級
+        // 在 main.py/core 中分數已經是 np.clip(raw_score, 0, 100)
+        let displayScore = ai.score;
+        if (displayScore > 100) displayScore = 100; // 安全機制
+
+        const scoreExplanation = `
+            <div class="ai-explanation-mini">
+                <i data-lucide="info" style="width:12px;height:12px"></i>
+                數值源自 AI 模型對分子結構（如親脂性、電解質平衡）與藥理相似度的綜合運算。
+            </div>
+        `;
+
+        // --- 2. SHAP 橫條圖顯示邏輯 ---
+        // 只有在高風險 (red) 且 視圖為醫師 (doctor) 時才顯示專業資料
+        let shapHtml = '';
+        if (currentView === 'doctor' && riskLevel === 'red') {
+            const featureNamesZh = {
+                'logp': '親脂性 (LogP)',
+                'mw': '分子量 (MW)',
+                'tpsa': '極性表面積 (TPSA)',
+                'h_donors': '氫鍵供體',
+                'h_acceptors': '氫鍵受體',
+                'rotatable_bonds': '可旋轉鍵',
+                'lipinski_violations': '利平斯基規則違規'
+            };
+
+            const featureDesc = {
+                'logp': '影響藥物在體內組織的分配與生物利用度。',
+                'mw': '影響藥物穿透細胞膜的能力。',
+                'tpsa': '與藥物穿透血腦屏障的能力高度相關。',
+                'lipinski_violations': '違反該規則可能代表藥物在人體內的口服吸收不佳。'
+            };
+
+            let shapItemsRaw = [];
+            if (Array.isArray(ai.shap_summary)) {
+                shapItemsRaw = ai.shap_summary.map(item => ({
+                    feature: item.feature,
+                    contribution: item.contribution
+                }));
+            } else if (ai.shap) {
+                shapItemsRaw = Object.entries(ai.shap).map(([key, val]) => ({
+                    feature: key,
+                    contribution: val
+                }));
+            }
+
+            if (shapItemsRaw.length > 0) {
+                const shapItems = shapItemsRaw.map(item => {
+                    const val = item.contribution;
+                    const isPositive = val > 0;
+                    const absVal = Math.abs(val);
+                    const percentage = Math.min(absVal * 5, 100); // 調整比例尺
+                    
+                    const nameZh = featureNamesZh[item.feature] || item.feature;
+                    const desc = featureDesc[item.feature] || '';
+
+                    return `
+                        <div class="shap-item">
+                            <div class="shap-label">
+                                <span class="feature-name">${nameZh}</span>
+                                <span class="shap-impact ${isPositive ? 'positive' : 'negative'}">
+                                    ${isPositive ? '+' : '-'}${absVal.toFixed(2)}
+                                </span>
+                            </div>
+                            <div class="shap-bar-bg">
+                                <div class="shap-bar-fill ${isPositive ? 'positive' : 'negative'}" style="width: ${percentage}%"></div>
+                            </div>
+                            ${desc ? `<div class="feature-desc">${desc}</div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+
+                shapHtml = `
+                    <div class="shap-section">
+                        <div class="shap-title"><i data-lucide="bar-chart-3"></i> 結構屬性貢獻分析 (僅限醫師參考)</div>
+                        <div class="shap-container">
+                            ${shapItems}
+                        </div>
+                    </div>
+                `;
+            }
         }
-
-        if (shapItemsRaw.length === 0) return '';
-
-        const shapItems = shapItemsRaw.map(item => {
-            const val = item.contribution;
-            const isPositive = val > 0;
-            const absVal = Math.abs(val);
-            const percentage = Math.min(absVal * 150, 100); 
-            
-            return `
-                <div class="shap-item">
-                    <div class="shap-label">
-                        <span>${item.feature}</span>
-                        <span class="shap-impact ${isPositive ? 'positive' : 'negative'}">
-                            ${isPositive ? '+' : '-'}${absVal.toFixed(2)}
-                        </span>
-                    </div>
-                    <div class="shap-bar-bg">
-                        <div class="shap-bar-fill ${isPositive ? 'positive' : 'negative'}" style="width: ${percentage}%"></div>
-                    </div>
-                </div>
-            `;
-        }).join('');
 
         return `
             <div class="ai-insight-block">
                 <div class="ai-header">
                     <div class="ai-badge">
-                        <i class="fas fa-brain"></i> Powered by MedSafe AI
+                        <i data-lucide="cpu"></i> Powered by MedSafe AI
                     </div>
                     <div class="ai-score-label">
-                        AI 預測風險: ${(ai.score * 100).toFixed(0)}%
+                        AI 預測風險: ${displayScore.toFixed(1)}%
                     </div>
                 </div>
-                <div class="shap-container">
-                    ${shapItems}
-                </div>
+                ${scoreExplanation}
+                ${shapHtml}
             </div>
         `;
     }
