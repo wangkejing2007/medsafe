@@ -1,9 +1,9 @@
 from typing import List, Dict, Any
-from medsafe.core.drug_database import DrugDatabase
-from medsafe.core.molecular_analyzer import MolecularAnalyzer
-from medsafe.core.cyp450_analyzer import CYP450Analyzer
-from medsafe.core.ai_model import AIInteractionModel
-from medsafe.config import settings
+from core.drug_database import DrugDatabase
+from core.molecular_analyzer import MolecularAnalyzer
+from core.cyp450_analyzer import CYP450Analyzer
+from core.ai_model import AIInteractionModel
+from config import settings
 
 class RiskScorer:
     """綜合風險評分引擎"""
@@ -84,12 +84,20 @@ class RiskScorer:
              level = "green"
              level_zh = "安全"
 
-        return {
+        result = {
             "score": score,
             "level": level,
             "level_zh": level_zh,
             "reasons": reasons
         }
+        
+        # Also promote ai_details to top-level for easier frontend access
+        for r in reasons:
+            if "ai_details" in r:
+                result["ai_details"] = r["ai_details"]
+                break
+                
+        return result
 
     def analyze_all(self, drug_list: List[str]) -> Dict[str, Any]:
         """分析整份藥藥單"""

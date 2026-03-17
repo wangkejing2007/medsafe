@@ -1,7 +1,7 @@
 import json
 import os
 from typing import List, Dict, Optional
-from medsafe.config import settings
+from config import settings
 
 class DrugDatabase:
     """藥物資料庫模組：管理藥物基本資訊與交互作用資料"""

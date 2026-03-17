@@ -1,9 +1,17 @@
+import os
+import sys
+
+# 將當前目錄（專案根目錄）加入路徑，以便 import medsafe
+# 注意：如果是從根目錄執行 python main.py，需要確保 medsafe 作為包被識別
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from medsafe.api.routes import router as api_router
-from medsafe.config import settings
-import os
+from starlette.staticfiles import StaticFiles
+
+from config import settings
+from api.routes import router as api_router
 
 app = FastAPI(
     title=settings.APP_NAME,

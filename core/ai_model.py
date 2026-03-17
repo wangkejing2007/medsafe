@@ -1,7 +1,7 @@
 import numpy as np
 import os
 from typing import Dict, Any, List, Tuple
-from medsafe.core.molecular_analyzer import MolecularAnalyzer
+from core.molecular_analyzer import MolecularAnalyzer
 
 class AIInteractionModel:
     """

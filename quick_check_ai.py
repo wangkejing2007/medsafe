@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.abspath(__name__)))
 
-from medsafe.core.ai_model import AIInteractionModel
+from core.ai_model import AIInteractionModel
 
 def quick_check():
     print("Initializing AI Model...")

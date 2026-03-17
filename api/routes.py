@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException
 from typing import List
 from pydantic import BaseModel
-from medsafe.core.risk_scorer import RiskScorer
-from medsafe.core.drug_database import DrugDatabase
-from medsafe.core.molecular_analyzer import MolecularAnalyzer
+from core.risk_scorer import RiskScorer
+from core.drug_database import DrugDatabase
+from core.molecular_analyzer import MolecularAnalyzer
 
 router = APIRouter()
 scorer = RiskScorer()
