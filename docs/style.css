@@ -408,6 +408,8 @@ input[type="text"]:focus {
 .status-yellow #status-icon { color: var(--warning); }
 .status-red .status-ring { border-color: var(--danger); }
 .status-red #status-icon { color: var(--danger); }
+.status-unknown .status-ring { border-color: #94a3b8; }
+.status-unknown #status-icon { color: #64748b; }
 
 #status-text {
     font-size: 1.6rem;
@@ -433,6 +435,11 @@ input[type="text"]:focus {
 .detail-item.risk-high {
     border: 2px solid var(--danger);
     box-shadow: 0 0 20px rgba(239, 68, 68, 0.15);
+}
+
+.detail-item.risk-unknown {
+    border: 1px dashed #cbd5e1;
+    background-color: #f8fafc;
 }
 
 .detail-header {

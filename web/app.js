@@ -9,8 +9,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusCard = document.getElementById('status-card');
     
     let drugs = [];
+    let drugDisplayNames = {}; // Map generic to ZH display
     let currentView = 'elderly'; // default
     let lastResult = null;
+
+    // --- Deployment Config ---
+    // Make PRODUCTION_API_URL accessible to both add and analyze routines
+    const PRODUCTION_API_URL = 'https://medsafe-backend-vhvb.onrender.com';
 
     // --- View Switching ---
     const viewBtns = {
@@ -29,12 +34,70 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Drug Selection ---
-    addBtn.addEventListener('click', () => {
+    addBtn.addEventListener('click', async () => {
         const value = drugInput.value.trim();
-        if (value && !drugs.includes(value)) {
-            drugs.push(value);
-            renderTags();
-            drugInput.value = '';
+        if (!value) return;
+        
+        if (drugs.includes(value)) {
+            alert('此藥品已在清單中');
+            return;
+        }
+
+        // Show loading state
+        addBtn.disabled = true;
+        addBtn.innerText = '驗證中...';
+
+        try {
+            const isGitHub = window.location.hostname.includes('github.io');
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            
+            // Use search endpoint for better validation data
+            // If local, use relative path to talk to local backend. If production/GitHub, use Render URL.
+            const apiUrl = isLocal ? `/api/drug/search?query=${encodeURIComponent(value)}` : 
+                          (PRODUCTION_API_URL ? `${PRODUCTION_API_URL}/api/drug/search?query=${encodeURIComponent(value)}` : `/api/drug/search?query=${encodeURIComponent(value)}`);
+            
+            let isValid = false;
+            let standardName = value;
+
+            if (isGitHub && !PRODUCTION_API_URL) {
+                // Mock validation for GitHub Pages demo
+                const mockKnown = ['aspirin', 'warfarin', '阿斯匹靈', '華法林', 'sildenafil', 'nitroglycerin', '威而鋼', '硝化甘油', 'ibuprofen', 'lithium', '伊普', '鋰鹽', 'statin', 'grapefruit', '史他汀', '葡萄柚'];
+                isValid = mockKnown.some(k => value.toLowerCase().includes(k.toLowerCase()));
+                standardName = value;
+            } else {
+                const response = await fetch(apiUrl);
+                if (response.ok) {
+                    const data = await response.json();
+                    // Validation criteria:
+                    // 1. Generic name MUST exist
+                    // 2. If it's the SAME as query, it's only valid if we also have SMILES (molecular data)
+                    //    OR if it's found in our known mock list (for demo)
+                    if (data.generic_name) {
+                        isValid = true;
+                        standardName = data.generic_name;
+                        // Save ZH name for tag rendering
+                        if (data.zh_name) {
+                            drugDisplayNames[standardName] = `${data.zh_name} (${standardName})`;
+                        } else {
+                            drugDisplayNames[standardName] = standardName;
+                        }
+                    }
+                }
+            }
+
+            if (isValid) {
+                drugs.push(standardName); // Use the standard name for consistency
+                renderTags();
+                drugInput.value = '';
+            } else {
+                alert(`查無此藥品: "${value}"\n請確認藥品名稱輸入是否正確。`);
+            }
+        } catch (error) {
+            console.error('Validation failed', error);
+            alert('驗證連線失敗，請稍後再試');
+        } finally {
+            addBtn.disabled = false;
+            addBtn.innerText = '新增藥品';
             analyzeBtn.disabled = drugs.length < 2;
         }
     });
@@ -48,8 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
         drugs.forEach((drug, index) => {
             const tag = document.createElement('div');
             tag.className = 'drug-tag';
+            const displayName = drugDisplayNames[drug] || drug;
             tag.innerHTML = `
-                ${drug}
+                ${displayName}
                 <span class="remove-btn" onclick="removeDrug(${index})">×</span>
             `;
             drugListContainer.appendChild(tag);
@@ -69,8 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // --- Deployment Config ---
         const isGitHub = window.location.hostname.includes('github.io');
-        // 如果您已經部署了 Render，請將網址貼在下方，例如: 'https://medsafe-api.onrender.com'
-        const PRODUCTION_API_URL = 'https://medsafe-backend-vhvb.onrender.com'; 
         
         if (isGitHub) {
             const badge = document.getElementById('demo-badge');
@@ -85,7 +147,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 data = getSimulatedResult(drugs);
             } else {
                 // Real API call (Local or Remote)
-                const apiUrl = PRODUCTION_API_URL ? `${PRODUCTION_API_URL}/api/analyze` : '/api/analyze';
+                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                const apiUrl = isLocal ? '/api/analyze' : 
+                              (PRODUCTION_API_URL ? `${PRODUCTION_API_URL}/api/analyze` : '/api/analyze');
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -284,8 +348,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 'green': `
                     <svg class="status-svg-flat" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="12" cy="12" r="11" fill="#10b981"/>
-                        <path d="M12 12L10.5 10.5M12 12L15.5 8.5M12 12L9 15L7.5 13.5" stroke="white" stroke-width="0" opacity="0"/>
                         <path d="M7 12.5L10 15.5L17 8.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>`,
+                'unknown_drug': `
+                    <svg class="status-svg-flat" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="11" fill="#64748b"/>
+                        <path d="M12 17V17.01M12 14C12 14 12 12.5 13 11.5C14 10.5 14 9.5 14 8.5C14 7.39543 13.1046 6.5 12 6.5C10.8954 6.5 10 7.39543 10 8.5" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
                     </svg>`
             };
             iconContainer.innerHTML = svgMap[riskLevel] || svgMap['green'];
@@ -294,9 +362,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update Text
         if (statusText) statusText.innerText = ''; 
         if (statusSubtext) {
-            statusSubtext.innerText = data.overall_level === 'green' 
-                ? '您的用藥目前看起來非常安全。' 
-                : '偵測到潛在交互作用，建議諮詢醫師或藥師。';
+            if (data.overall_level === 'green') {
+                statusSubtext.innerText = '您的用藥目前看起來非常安全。';
+            } else if (data.overall_level === 'unknown_drug') {
+                statusSubtext.innerText = '部分藥品在資料庫中查無資料，建議諮詢醫師。';
+            } else {
+                statusSubtext.innerText = '偵測到潛在交互作用，建議諮詢醫師或藥師。';
+            }
         }
         
         document.getElementById('disclaimer-text').innerText = data.disclaimer;
@@ -324,11 +396,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `).join('');
 
-            const severityClassMap = { 'red': 'high', 'yellow': 'medium', 'green': 'low' };
+            const severityClassMap = { 'red': 'high', 'yellow': 'medium', 'green': 'low', 'unknown_drug': 'unknown' };
             const severityClass = severityClassMap[res.level] || 'low';
             
-            const imgNameMap = { 'red': '紅燈', 'yellow': '黃燈', 'green': '綠燈' };
+            const imgNameMap = { 'red': '紅燈', 'yellow': '黃燈', 'green': '綠燈', 'unknown_drug': '紅燈' }; // Use red or neutral? Let's use red for warning or neutral
             const imgName = imgNameMap[res.level] || '綠燈';
+            
+            // If unknown_drug, don't show the traffic light image or show a special placeholder
+             const trafficHtml = res.level === 'unknown_drug' 
+                ? `<div class="unknown-placeholder"><i data-lucide="help-circle"></i></div>`
+                : `<img src="${imgName}.webp" class="detail-traffic-img" alt="${imgName}">`;
 
             const nameA = res.drug_a_zh === res.drug_a_input ? res.drug_a_zh : `${res.drug_a_zh} (${res.drug_a_input})`;
             const nameB = res.drug_b_zh === res.drug_b_input ? res.drug_b_zh : `${res.drug_b_zh} (${res.drug_b_input})`;
@@ -340,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${nameA} + ${nameB}
                     </div>
                     <div class="traffic-image-box">
-                        <img src="${imgName}.webp" class="detail-traffic-img" alt="${imgName}">
+                        ${trafficHtml}
                     </div>
                 </div>
                 ${reasonsHtml}

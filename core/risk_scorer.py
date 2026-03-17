@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from core.drug_database import DrugDatabase
 from core.molecular_analyzer import MolecularAnalyzer
 from core.cyp450_analyzer import CYP450Analyzer
@@ -14,11 +14,25 @@ class RiskScorer:
         self.cyp_analyzer = CYP450Analyzer()
         self.ai_engine = AIInteractionModel()
 
-    def calculate_interaction_risk(self, drug_a: str, drug_b: str) -> Dict[str, Any]:
+    def calculate_interaction_risk(self, drug_a: Optional[str], drug_b: Optional[str]) -> Dict[str, Any]:
         """計算兩藥物之間的綜合風險"""
         score = 0
         reasons = []
         
+        # 0. 處理無效/未知藥物
+        if not drug_a or not drug_b:
+            return {
+                "score": 0,
+                "level": "unknown_drug",
+                "level_zh": "資料庫查無此藥",
+                "reasons": [{
+                    "source": "database_lookup",
+                    "severity": "info",
+                    "description": "資料庫沒有此藥品資料，無法進行精確分析。",
+                    "mechanism": "Unknown Drug"
+                }]
+            }
+
         # 1. 檢查已知交互作用
         known = self.db.get_known_interaction(drug_a, drug_b)
         if known:
@@ -136,7 +150,7 @@ class RiskScorer:
 
         return {
             "overall_level": overall_level,
-            "overall_level_zh": "高風險" if overall_level == "red" else ("中風險" if overall_level == "yellow" else "安全"),
+            "overall_level_zh": "高風險" if overall_level == "red" else ("中風險" if overall_level == "yellow" else ("資料庫查無此藥" if overall_level == "unknown_drug" else "安全")),
             "pair_results": pair_results,
             "num_drugs": num_drugs,
             "disclaimer": settings.DISCLAIMER

@@ -31,14 +31,14 @@ app.add_middleware(
 # 掛載 API 路由
 app.include_router(api_router, prefix="/api")
 
+@app.get("/health")
+async def health_check():
+    return {"status": "ok", "message": "MedSafe API is running"}
+
 # 掛載 Web 靜態檔案
 web_dir = os.path.join(os.path.dirname(__file__), "web")
 if os.path.exists(web_dir):
     app.mount("/", StaticFiles(directory=web_dir, html=True), name="web")
-
-@app.get("/health")
-async def health_check():
-    return {"status": "ok", "message": "MedSafe API is running"}
 
 if __name__ == "__main__":
     import uvicorn

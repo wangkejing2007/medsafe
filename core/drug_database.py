@@ -34,8 +34,8 @@ class DrugDatabase:
                 if alias.lower() == query_lower:
                     return name
         
-        # 3. 若找不到，回傳原字串（可能不在本地資料庫中）
-        return query
+        # 3. 若找不到，回傳 None（表示不在本地資料庫中）
+        return None
 
     def get_zh_name(self, name: str) -> str:
         """獲取藥物的中文名稱"""

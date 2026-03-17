@@ -14,6 +14,9 @@ class MolecularAnalyzer:
             "Fexofenadine": "CC(C)(C1=CC=C(C=C1)C(C2=CC=CC=C2)(C3=CC=CC=C3)O)CCN4CCC(CC4)C(C5=CC=CC=C5)(C6=CC=CC=C6)O",
             "Warfarin": "CC(=O)CC(C1=CC=C(C=C1)O)C2=C(C3=CC=CC=C3OC2=O)O", # Simplified
             "Aspirin": "CC(=O)OC1=CC=CC=C1C(=O)O",
+            "Acetaminophen": "CC(=O)NC1=CC=C(C=C1)O",
+            "Ibuprofen": "CC(C)CC1=CC=C(C=C1)C(C)C(=O)O",
+            "Naproxen": "CC(C1=CC2=C(C=C1)C=C(C=C2)OC)C(=O)O",
             "Omeprazole": "CC1=CN=C(C(=C1OC)C)CS(=O)C2=NC3=C(N2)C=C(C=C3)OC"
         }
 
