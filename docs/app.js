@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- Deployment Config ---
         const isGitHub = window.location.hostname.includes('github.io');
         // 如果您已經部署了 Render，請將網址貼在下方，例如: 'https://medsafe-api.onrender.com'
-        const PRODUCTION_API_URL = ''; 
+        const PRODUCTION_API_URL = 'https://medsafe-backend-vhvb.onrender.com'; 
         
         if (isGitHub) {
             const badge = document.getElementById('demo-badge');
