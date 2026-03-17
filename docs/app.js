@@ -67,8 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
         analyzeBtn.disabled = true;
         analyzeBtn.innerText = '正在分析中...';
         
-        // Detect if running on GitHub Pages or locally
+        // --- Deployment Config ---
         const isGitHub = window.location.hostname.includes('github.io');
+        // 如果您已經部署了 Render，請將網址貼在下方，例如: 'https://medsafe-api.onrender.com'
+        const PRODUCTION_API_URL = ''; 
         
         if (isGitHub) {
             const badge = document.getElementById('demo-badge');
@@ -77,13 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             let data;
-            if (isGitHub) {
+            if (isGitHub && !PRODUCTION_API_URL) {
                 // Simulated API call for Demo
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 data = getSimulatedResult(drugs);
             } else {
-                // Real API call for Local
-                const response = await fetch('/api/analyze', {
+                // Real API call (Local or Remote)
+                const apiUrl = PRODUCTION_API_URL ? `${PRODUCTION_API_URL}/api/analyze` : '/api/analyze';
+                const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ drugs })

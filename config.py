@@ -18,7 +18,7 @@ class Settings:
 
     # === API 伺服器 ===
     HOST: str = os.getenv("HOST", "0.0.0.0")
-    PORT: int = 8001
+    PORT: int = int(os.getenv("PORT", 8001))
 
     # === 外部 API ===
     OPENFDA_BASE_URL: str = "https://api.fda.gov/drug"

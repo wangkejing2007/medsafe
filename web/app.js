@@ -67,8 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
         analyzeBtn.disabled = true;
         analyzeBtn.innerText = '正在分析中...';
         
-        // Detect if running on GitHub Pages or locally
+        // --- Deployment Config ---
         const isGitHub = window.location.hostname.includes('github.io');
+        // 如果您已經部署了 Render，請將網址貼在下方，例如: 'https://medsafe-api.onrender.com'
+        const PRODUCTION_API_URL = ''; 
         
         if (isGitHub) {
             const badge = document.getElementById('demo-badge');
@@ -77,13 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             let data;
-            if (isGitHub) {
+            if (isGitHub && !PRODUCTION_API_URL) {
                 // Simulated API call for Demo
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 data = getSimulatedResult(drugs);
             } else {
-                // Real API call for Local
-                const response = await fetch('/api/analyze', {
+                // Real API call (Local or Remote)
+                const apiUrl = PRODUCTION_API_URL ? `${PRODUCTION_API_URL}/api/analyze` : '/api/analyze';
+                const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ drugs })
@@ -115,11 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     drug_a_zh: '阿斯匹靈', drug_a_input: 'Aspirin',
                     drug_b_zh: '華法林', drug_b_input: 'Warfarin',
                     level: 'red',
-                    description: '嚴重出血風險顯著增加，包括腸胃道出血和慶內出血。',
+                    description: '嚴重出血風險顯著增加，包括腸胃道出血和腦內出血。',
                     mechanism: '兩者皆具抗凝血/抗血小板作用，併用會產生加成效應。',
                     ai_details: {
-                        score: 0.92,
-                        shap: { '分子量相似性': 0.45, '親脂性 (LogP)': 0.32, '代謝路徑重疊': 0.15 }
+                        score: 92,
+                        shap: { 'logp': 0.45, 'mw': 0.32, 'tpsa': 0.15 }
                     }
                 }
             },
@@ -133,8 +136,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     description: '可能導致嚴重的低血壓，甚至致命。',
                     mechanism: '兩者皆會增加單氧化氮 (NO)，導致血管劇烈擴張。',
                     ai_details: {
-                        score: 0.98,
-                        shap: { '分子通路重疊': 0.55, '血管擴張效應': 0.35, '極性表面積 (TPSA)': 0.08 }
+                        score: 98,
+                        shap: { 'logp': 0.55, 'mw': 0.35, 'tpsa': 0.08 }
                     }
                 }
             },
@@ -148,8 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     description: '可能導致鋰鹽中毒，影響腎功能。',
                     mechanism: 'NSAIDs 會減少前列腺素合成，進而減少腎臟對鋰的排泄。',
                     ai_details: {
-                        score: 0.85,
-                        shap: { '腎毒性特徵': 0.42, '電解質平衡影響': 0.28, '代謝率改變': 0.15 }
+                        score: 85,
+                        shap: { 'logp': 0.42, 'mw': 0.28, 'tpsa': 0.15 }
                     }
                 }
             },
@@ -163,8 +166,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     description: '增加藥物血中濃度，可能增加肌肉痠痛風險。',
                     mechanism: '葡萄柚成分會抑制 CYP3A4 酵素，延緩某些史他汀類藥物的代謝。',
                     ai_details: {
-                        score: 0.65,
-                        shap: { 'CYP3A4 抑制強度': 0.52, '肌肉毒性特徵': 0.12, '分子溶解度': 0.01 }
+                        score: 65,
+                        shap: { 'logp': 0.52, 'mw': 0.12, 'tpsa': 0.01 }
                     }
                 }
             }
@@ -366,6 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 修正分數顯示：後端傳回的是 0-100 的數值，不應再乘以 100 如果它已經是百分比量級
         // 在 main.py/core 中分數已經是 np.clip(raw_score, 0, 100)
         let displayScore = ai.score;
+        if (displayScore > 0 && displayScore <= 1) displayScore *= 100;
         if (displayScore > 100) displayScore = 100; // 安全機制
 
         const scoreExplanation = `
