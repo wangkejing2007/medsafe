@@ -87,6 +87,7 @@ class MedSafeMCPClient:
         return results
 
 
-# 使用正確的絕對路徑連接至 Taiwan-Health-MCP
-mcp_server_path = r"d:\Taiwan-Health-MCP\src\server.py"
+# 使用專案內部的相對路徑連接至 MCP 伺服器
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+mcp_server_path = os.path.join(project_root, "mcp_server", "src", "server.py")
 client = MedSafeMCPClient(mcp_server_path)
