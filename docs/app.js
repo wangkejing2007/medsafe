@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } finally {
             addBtn.disabled = false;
             addBtn.innerText = '新增藥品';
-            analyzeBtn.disabled = drugs.length < 2;
+            analyzeBtn.disabled = drugs.length < 1;
         }
     });
 
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.removeDrug = (index) => {
         drugs.splice(index, 1);
         renderTags();
-        analyzeBtn.disabled = drugs.length < 2;
+        analyzeBtn.disabled = drugs.length < 1;
     };
 
     // --- Analysis ---
@@ -141,6 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         try {
             let data;
+            const selectedHealthFoods = Array.from(document.querySelectorAll('#health-food-list input:checked')).map(cb => cb.value);
+
             if (isGitHub && !PRODUCTION_API_URL) {
                 // Simulated API call for Demo
                 await new Promise(resolve => setTimeout(resolve, 2000));
@@ -148,14 +150,37 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // Real API call (Local or Remote)
                 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                const apiUrl = isLocal ? '/api/analyze' : 
-                              (PRODUCTION_API_URL ? `${PRODUCTION_API_URL}/api/analyze` : '/api/analyze');
-                const response = await fetch(apiUrl, {
+                const baseApiUrl = isLocal ? '/api' : (PRODUCTION_API_URL || '/api');
+                
+                // 1. 基本藥物交互分析
+                const response = await fetch(`${baseApiUrl}/analyze`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ drugs })
                 });
                 data = await response.json();
+
+                // 2. MCP 擴充請求 (並行發送)
+                const mcpPromises = [];
+
+                if (selectedHealthFoods.length > 0) {
+                    mcpPromises.push(
+                        fetch(`${baseApiUrl}/mcp/health-food-check`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ drugs, health_foods: selectedHealthFoods })
+                        }).then(async res => {
+                            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                            data.health_food_alerts = await res.json();
+                        }).catch(e => {
+                            console.error("MCP Health Food Check Failed:", e);
+                            data.health_food_alerts = { results: [{ raw_text: "⚠️ 無法取得保健品詳細資料。這可能是因為 MCP 伺服器正在背景下載 TFDA 資料庫（首次連線約需 1-2 分鐘），或是連線逾時。" }] };
+                        })
+                    );
+                }
+
+
+                await Promise.all(mcpPromises);
             }
             lastResult = data;
             renderResults(data);
@@ -182,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     drug_a_zh: '阿斯匹靈', drug_a_input: 'Aspirin',
                     drug_b_zh: '華法林', drug_b_input: 'Warfarin',
                     level: 'red',
-                    description: '嚴重出血風險顯著增加，包括腸胃道出血和腦內出血。',
+                    description: '嚴重出血風險顯著增加，包括腸胃道出血 and 腦內出血。',
                     mechanism: '兩者皆具抗凝血/抗血小板作用，併用會產生加成效應。',
                     ai_details: {
                         score: 92,
@@ -369,6 +394,11 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 statusSubtext.innerText = '偵測到潛在交互作用，建議諮詢醫師或藥師。';
             }
+
+            // 新增 MCP 擴充警示文字
+            if (data.health_food_alerts && data.health_food_alerts.results && data.health_food_alerts.results.length > 0) {
+                statusSubtext.innerHTML += `<br><span class="warning-text-large" style="color:#f59e0b !important; font-size:0.95rem !important; font-weight:normal !important; display:block !important; margin-top:10px !important;">【重要交互作用警示】：偵測到您選擇的保健品與藥物可能有潛在關聯。</span>`;
+            }
         }
         
         document.getElementById('disclaimer-text').innerText = data.disclaimer;
@@ -376,13 +406,46 @@ document.addEventListener('DOMContentLoaded', () => {
         detailsContainer.innerHTML = '';
         detailsContainer.className = `detail-container view-${currentView}`; // Keep this line
 
-        if (!data.pair_results || data.pair_results.length === 0) {
+        if ((!data.pair_results || data.pair_results.length === 0) && !data.health_food_alerts) {
             detailsContainer.innerHTML = '<div class="glassmorphism brand-shadow" style="padding: 2rem; text-align: center; color: var(--text-muted);"><p>未偵測到顯著的交互作用。</p></div>';
-            if (window.lucide) { // Ensure lucide is available
+            if (window.lucide) {
                 window.lucide.createIcons();
             }
             return;
         }
+
+        // --- 渲染健康食品分析結果 ---
+        if (data.health_food_alerts && data.health_food_alerts.results) {
+            data.health_food_alerts.results.forEach(hf => {
+                if (hf.raw_text) {
+                    const div = document.createElement('div');
+                    div.className = 'detail-item mcp-extension-item';
+                    div.innerHTML = `
+                        <div class="extension-badge"><i data-lucide="leaf"></i> 保健品資訊 (TFDA)</div>
+                        <div class="reason-block">
+                            <div style="white-space: pre-wrap; font-size: 0.9rem; line-height: 1.5; color: var(--text-color);">${hf.raw_text}</div>
+                        </div>
+                    `;
+                    detailsContainer.appendChild(div);
+                } else if (hf.results && hf.results.length > 0) {
+                    const item = hf.results[0];
+                    const div = document.createElement('div');
+                    div.className = 'detail-item mcp-extension-item';
+                    div.innerHTML = `
+                        <div class="extension-badge"><i data-lucide="leaf"></i> 保健品分析</div>
+                        <div class="detail-header">
+                            <div class="pair-names">${item.product_name || '未知保健品'}</div>
+                        </div>
+                        <div class="reason-block">
+                            <p><strong>保健功效：</strong>${item.health_benefit || '尚無資料'}</p>
+                            <p class="mechanism"><strong>注意事項：</strong>${item.warnings || '請諮詢專業人員'}</p>
+                        </div>
+                    `;
+                    detailsContainer.appendChild(div);
+                }
+            });
+        }
+
 
         data.pair_results.forEach(res => {
             const div = document.createElement('div');
