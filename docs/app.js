@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 // Real API call (Local or Remote)
                 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                const baseApiUrl = isLocal ? '/api' : (PRODUCTION_API_URL || '/api');
+                const baseApiUrl = isLocal ? '/api' : (PRODUCTION_API_URL ? `${PRODUCTION_API_URL}/api` : '/api');
                 
                 // 1. 基本藥物交互分析
                 const response = await fetch(`${baseApiUrl}/analyze`, {
