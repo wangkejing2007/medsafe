@@ -194,6 +194,77 @@ h1 {
     margin-bottom: 1.5rem;
 }
 
+/* --- MCP Extension Styles --- */
+.mcp-extension-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+    padding: 1.25rem;
+    background: rgba(14, 165, 233, 0.05);
+    border-radius: 14px;
+    border: 1px dashed rgba(14, 165, 233, 0.3);
+}
+
+.mcp-extension-inputs .input-group > label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    margin-bottom: 0.75rem;
+    width: 100%;
+}
+
+.input-group label i {
+    color: var(--accent-color);
+    width: 18px;
+}
+
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+}
+
+.checkbox-grid label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.1rem; /* Increased from 0.9rem */
+    font-weight: 600;
+    cursor: pointer;
+    background: white;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+}
+
+.checkbox-grid label:has(input:checked) {
+    background: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+.search-bar-small {
+    margin-bottom: 0.5rem;
+}
+
+.search-bar-small input {
+    padding: 0.6rem 0.6rem 0.6rem 1rem;
+    font-size: 0.9rem;
+}
+
+.tag-container-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
 /* --- Demo Badge --- */
 .demo-badge {
     position: fixed;
@@ -879,4 +950,34 @@ input[type="text"]:focus {
     nav { width: auto; }
     main { max-width: 600px; margin-top: -60px; }
     .hero-bg { height: 300px; }
+}
+
+/* User Requested Adjustments */
+#status-subtext .warning-text-large {
+    font-size: 0.95rem !important; /* Slightly larger for visibility */
+    font-weight: normal !important; /* Removed bold as requested */
+    color: #f59e0b !important; /* Changed back to orange as requested */
+    display: block !important;
+    margin-top: 8px !important;
+    margin-bottom: 4px !important;
+}
+
+.warning-text-large {
+    font-size: 0.95rem !important;
+    font-weight: normal !important;
+    color: #f59e0b !important;
+    display: block !important;
+}
+
+.extension-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(14, 165, 233, 0.1);
+    color: var(--accent-color);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 1.15rem; /* Enlarged from 0.85rem */
+    font-weight: 700;
+    margin-bottom: 12px;
 }

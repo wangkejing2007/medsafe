@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>藥安心 - AI 多重用藥安全守護系統</title>
-    <link rel="stylesheet" href="style.css?v=2.8">
+    <link rel="stylesheet" href="style.css?v=3.5">
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Lucide Icons -->
@@ -49,6 +49,21 @@
             </div>
             
             <div id="drug-list" class="tag-container"></div>
+
+            <div class="mcp-extension-inputs">
+                <div class="input-group">
+                    <label><i data-lucide="apple"></i> 是否經常服用健康食品/保健品？</label>
+                    <div id="health-food-list" class="checkbox-grid">
+                        <label><input type="checkbox" value="銀杏"> 銀杏</label>
+                        <label><input type="checkbox" value="益生菌"> 益生菌</label>
+                        <label><input type="checkbox" value="魚油"> 魚油</label>
+                        <label><input type="checkbox" value="鈣片"> 鈣片</label>
+                        <label><input type="checkbox" value="葉黃素"> 葉黃素</label>
+                        <label><input type="checkbox" value="紅麴"> 紅麴</label>
+                    </div>
+                </div>
+
+            </div>
             
             <button id="analyze-btn" class="primary-btn pulse-effect" disabled>
                 <i data-lucide="search"></i>
@@ -84,7 +99,7 @@
         </section>
     </main>
 
-    <script src="app.js?v=2.8"></script>
+    <script src="app.js?v=3.2"></script>
     <script>
         // Initialize Lucide icons
         lucide.createIcons();
