@@ -1,6 +1,4 @@
-import asyncio
-import json
-import os
+import sys
 from typing import List, Dict, Any, Optional
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
@@ -20,8 +18,9 @@ class MedSafeMCPClient:
         else:
             env["PYTHONPATH"] = server_dir
 
+        # Use sys.executable to ensure the correct Python interpreter is used on Render/Windows
         self.server_params = StdioServerParameters(
-            command="python",
+            command=sys.executable,
             args=[server_script_path],
             env=env
         )
@@ -83,7 +82,13 @@ class MedSafeMCPClient:
                 })
                 results.append(res)
             except Exception as e:
-                print(f"Error calling search_health_food for {hf}: {e}")
+                error_msg = str(e)
+                print(f"Error calling search_health_food for {hf}: {error_msg}")
+                # Handle database initialization message specifically
+                if "資料庫初始化中" in error_msg:
+                    results.append({"content": [{"type": "text", "text": "資料庫初始化中，請稍候..."}]})
+                else:
+                    raise e
         return results
 
 
