@@ -188,16 +188,17 @@ def check_medical_conflict(diagnosis_code: str, procedure_code: str) -> str:
 
 
 @mcp.tool()
-def search_drug_info(keyword: str) -> str:
+def search_drug_info(keyword: str, generic_name: str = None) -> str:
     """
-    Search for Taiwan FDA approved drugs by name (Chinese/English) or indication.
+    Search for Taiwan FDA approved drugs by name (Chinese/English), generic name, or indication.
     Returns basic information including License ID, Name, and Indication.
 
     Args:
         keyword: Drug name or symptom (e.g., 'Panadol', '普拿疼', '頭痛').
+        generic_name: Optional - standard generic name to improve matching (e.g., 'Acetaminophen').
     """
-    log_info(f"Tool called: search_drug_info with query='{keyword}'")
-    return drug_service.search_drug(keyword)
+    log_info(f"Tool called: search_drug_info with query='{keyword}', generic_name='{generic_name}'")
+    return drug_service.search_drug(keyword, generic_name)
 
 
 @mcp.tool()

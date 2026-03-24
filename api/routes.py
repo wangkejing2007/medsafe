@@ -54,20 +54,20 @@ async def search_drug(query: str):
 
     # 3. Enhanced TFDA Search via MCP (Async)
     try:
-        tfda_res = await mcp_client.search_tfda_drug(query)
+        # Pass both the original query and the resolved generic name (if any)
+        tfda_res = await mcp_client.search_drug_info(query, generic_name=std_name)
         if tfda_res and tfda_res.content:
             text = tfda_res.content[0].text
             try:
                 data = json.loads(text)
                 if data and "results" in data and len(data["results"]) > 0:
                     top_match = data["results"][0]
-                    # 優先使用 TFDA 的資料
+                    # Compare relevance if multiple sources return results
+                    # Here we prioritize the "direct name match" found by TFDA
                     std_name = top_match.get("name_en", std_name)
                     zh_name = top_match.get("name_zh", zh_name)
                     source = "TFDA (MCP)"
             except json.JSONDecodeError:
-                # If not JSON, it might be a plain string from TFDA search
-                # We can try to extract name if it follows a pattern, but for now just skip
                 pass
     except Exception as e:
         print(f"MCP Search Error: {e}")

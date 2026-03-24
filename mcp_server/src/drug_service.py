@@ -260,30 +260,61 @@ class DrugService:
 
     # --- Query Features ---
 
-    def search_drug(self, keyword: str):
+    def search_drug(self, keyword: str, generic_name: str = None):
         """
-        Search for drugs by name (ZH/EN) or indication.
-        Returns JSON with search results.
+        Search for drugs by name (ZH/EN), generic name, or indication.
+        Uses a weighting system to better rank results (Name > Indication).
         """
         if not os.path.exists(self.db_path):
             return json.dumps({"error": "DB initializing..."})
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
-        query = f"%{keyword}%"
-        # Search specifically in the Master License table
-        sql = """
-            SELECT name_zh, name_en, indication, license_id, category
+        search_terms = [f"%{keyword}%"]
+        if generic_name and generic_name.lower() != keyword.lower():
+            search_terms.append(f"%{generic_name}%")
+
+        # Basic weighting: Name match > Indication match
+        # We use a CASE statement to calculate a 'relevance' score
+        conditions = []
+        params = []
+
+        for term in search_terms:
+            conditions.append("(name_zh LIKE ? OR name_en LIKE ? OR indication LIKE ?)")
+            params.extend([term, term, term])
+
+        where_clause = " OR ".join(conditions)
+
+        # Weighting logic:
+        # 10 pts for name match, 1 pt for indication match
+        weight_sql = " + ".join([
+            f"(CASE WHEN name_zh LIKE ? THEN 10 WHEN name_en LIKE ? THEN 10 WHEN indication LIKE ? THEN 1 ELSE 0 END)"
+            for _ in search_terms
+        ])
+        
+        # params for weight_sql are the same as for where_clause
+        full_params = params + params
+
+        sql = f"""
+            SELECT name_zh, name_en, indication, license_id, category,
+                   ({weight_sql}) as relevance
             FROM licenses
-            WHERE name_zh LIKE ? OR name_en LIKE ? OR indication LIKE ?
-            LIMIT 8
+            WHERE {where_clause}
+            ORDER BY relevance DESC, name_zh ASC
+            LIMIT 10
         """
-        cursor.execute(sql, (query, query, query))
-        rows = cursor.fetchall()
+
+        try:
+            cursor.execute(sql, tuple(full_params))
+            rows = cursor.fetchall()
+        except Exception as e:
+            conn.close()
+            return json.dumps({"error": f"Search execution failed: {e}"})
+
         conn.close()
 
         if not rows:
-            return json.dumps({"error": f"No results found for '{keyword}'.", "results": []})
+            return json.dumps({"error": f"No results found.", "results": []})
 
         results = []
         for r in rows:
@@ -292,7 +323,8 @@ class DrugService:
                 "name_zh": r[0],
                 "name_en": r[1],
                 "indication": r[2],
-                "category": r[4]
+                "category": r[4],
+                "relevance": r[5]
             })
 
         return json.dumps({"results": results}, ensure_ascii=False)
