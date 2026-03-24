@@ -191,7 +191,18 @@ h1 {
     position: relative;
     display: flex;
     gap: 8px;
+    margin-bottom: 0.75rem; /* Reduced from 1.5rem to accommodate notice */
+}
+
+.startup-notice {
+    color: #ff0000 !important; /* Bright Red */
+    font-size: 0.95rem;
+    font-weight: 800;
+    margin-top: -0.25rem;
     margin-bottom: 1.5rem;
+    text-align: center !important;
+    display: block !important;
+    width: 100% !important;
 }
 
 /* --- MCP Extension Styles --- */
